@@ -4,6 +4,7 @@ import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,9 +27,9 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 
 
     public SelectableBinBarGraphView(Context context, String title, boolean isNumBins,
-                                     long numBinsOrSize) {
+                                     long numBinsOrSize, OnValuesSelectedListener listener) {
         super(context, title, isNumBins, numBinsOrSize, true);
-        graphViewContentView = new SelectableBinGraphContentView(context);
+        graphViewContentView = new SelectableBinGraphContentView(context, listener);
         addView(graphViewContentView, new LayoutParams(LayoutParams.FILL_PARENT,
                                                        LayoutParams.FILL_PARENT, 1));
     }
@@ -63,13 +64,14 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
          * }
          */
         private GestureDetector mDetector;
-
+        private OnValuesSelectedListener onValuesSelectedListener;
 
         @SuppressLint("NewApi")
-        public SelectableBinGraphContentView(Context context) {
+        public SelectableBinGraphContentView(Context context, OnValuesSelectedListener listener) {
             super(context);
             //setOnClickListener(this);
             mDetector = new GestureDetector(getContext(), new SelectableBinGestureListener());
+            onValuesSelectedListener = listener;
         }
 
 
@@ -103,6 +105,7 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
                     }
                 }
                 redrawAll();
+                notifyOnValuesSelectedListener();
                 return true;
             }
 
@@ -119,7 +122,19 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
                 onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                 onMoveGesture(e2.getX() - lastTouchEventX);
                 lastTouchEventX = e2.getX();
+                notifyOnValuesSelectedListener();
                 return true;
+            }
+
+            private void notifyOnValuesSelectedListener(){
+                String tag = getClass().getName() + ":notifyOnValuesSelectedListener";
+                if(onValuesSelectedListener != null){
+                    double lowerValueBoundary =  (viewportStart + (lowerSelectBoundary / getWidth()) * viewportSize);
+                    double upperValueBoundary =  (viewportStart + (upperSelectBoundary / getWidth())* viewportSize);
+                    Log.d(tag, "calling OnValueSelectedListener. lowerSelectBoundary: " + lowerValueBoundary
+                          + " upperSelectBoundary: "+upperValueBoundary);
+                    onValuesSelectedListener.OnValuesSelected((long)lowerValueBoundary, (long)upperValueBoundary);
+                }
             }
         }
 
