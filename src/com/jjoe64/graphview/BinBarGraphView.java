@@ -107,26 +107,30 @@ public class BinBarGraphView extends GraphView {
     }
 
 
-    public static GraphViewData[] binData(GraphViewDataInterface[] data, double binSize) {
+    public GraphViewData[] binData(GraphViewDataInterface[] data, double binSize) {
 
-        double range = data[data.length - 1].getX() - data[0].getX();
+        //double range = data[data.length - 1].getX() - data[0].getX();
+        double range = viewportSize;
         int numBins = (int) (range / binSize) + 1;
         return binData(data, numBins);
     }
 
 
-    public static GraphViewData[] binData(GraphViewDataInterface[] data, int numBins) {
+    public GraphViewData[] binData(GraphViewDataInterface[] data, int numBins) {
 
-        double range = data[data.length - 1].getX() - data[0].getX();
+        //double range = data[data.length - 1].getX() - data[0].getX();
+        double range = viewportSize;
         double binSize = range / numBins;
-        double curBinCeiling = data[0].getX() + binSize;
-        double curBinFloor = data[0].getX();
+        double curBinCeiling = viewportStart + binSize;
+        double curBinFloor = viewportStart;
         GraphViewData bins[] = new GraphViewData[numBins];
         int valuesIndex = 0;
         for (int i = 0; i < numBins; i++) {
             int y = 0;
-
-            while ((valuesIndex < data.length) && (data[valuesIndex].getX() < curBinCeiling)
+            while ((valuesIndex < data.length) && (data[valuesIndex].getX() < curBinFloor)){
+                valuesIndex++;
+            }
+            while((valuesIndex < data.length) && (data[valuesIndex].getX() < curBinCeiling)
                    && (data[valuesIndex].getX() >= curBinFloor)) {
                 y++;
                 valuesIndex++;
