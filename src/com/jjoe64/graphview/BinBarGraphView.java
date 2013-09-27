@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
-import com.jjoe64.graphview.SelectableBinBarGraphView.SelectableBinGraphContentView;
 
 
 
@@ -57,9 +56,17 @@ public class BinBarGraphView extends GraphView {
     }
 
 
-    public void setBinSize(int binSize) {
+    public void setBinSize(long binSize) {
         isNumBins = false;
         binValue = binSize;
+        redrawAll();
+    }
+
+    public long getBinSize(){
+        if(!isNumBins){
+            return binValue;
+        }
+        return -1;
     }
 
 
@@ -112,15 +119,15 @@ public class BinBarGraphView extends GraphView {
         //double range = data[data.length - 1].getX() - data[0].getX();
         double range = viewportSize;
         int numBins = (int) (range / binSize) + 1;
-        return binData(data, numBins);
+        return binData(data, numBins, binSize);
     }
 
 
-    public GraphViewData[] binData(GraphViewDataInterface[] data, int numBins) {
+    public GraphViewData[] binData(GraphViewDataInterface[] data, int numBins, double binSize) {
 
         //double range = data[data.length - 1].getX() - data[0].getX();
         double range = viewportSize;
-        double binSize = range / numBins;
+        //double binSize = range / numBins;
         double curBinCeiling = viewportStart + binSize;
         double curBinFloor = viewportStart;
         GraphViewData bins[] = new GraphViewData[numBins];

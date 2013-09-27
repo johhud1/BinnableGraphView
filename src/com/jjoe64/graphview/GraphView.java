@@ -31,10 +31,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.LinearLayout;
 
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
@@ -54,7 +52,7 @@ import com.jjoe64.graphview.compatible.ScaleGestureDetector;
  *         Copyright (C) 2011 Jonas Gehring Licensed under the GNU Lesser
  *         General Public License (LGPL) http://www.gnu.org/licenses/lgpl.html
  */
-@SuppressLint("NewApi")
+//@SuppressLint("NewApi")
 abstract public class GraphView extends LinearLayout {
     static final private class GraphViewConfig {
         static final float BORDER = 20;
@@ -209,6 +207,7 @@ abstract public class GraphView extends LinearLayout {
                 // Log.d("GraphView",
                 // "on touch event scale not handled+"+lastTouchEventX);
                 // if not scaled, scroll
+                /*
                 if ((event.getAction() & MotionEvent.ACTION_DOWN) == MotionEvent.ACTION_DOWN) {
                     scrollingStarted = true;
                     handled = true;
@@ -228,7 +227,7 @@ abstract public class GraphView extends LinearLayout {
                         handled = true;
                     }
                 }
-                if (handled) invalidate();
+                if (handled) invalidate();*/
             } else {
                 // currently scaling
                 scrollingStarted = false;
