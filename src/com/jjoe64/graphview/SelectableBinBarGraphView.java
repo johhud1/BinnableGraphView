@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -22,15 +23,19 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 
     private class SelectRangeHandle {
         private static final int WIDTH = 8;
+        private static final int RECT_WIDTH = 50;
+        private static final int HANDLE_COLOR = Color.DKGRAY;
         private static final int COLOR = Color.BLACK;
         private float position;
         protected boolean isDragging = false;
+        protected Rect handleRect;
         public SelectRangeHandle() {
             position = 0;
         }
 
         public SelectRangeHandle(int position) {
             this.position = position;
+            handleRect = new Rect();
         }
 
 
@@ -40,10 +45,17 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
             paint.setColor(COLOR);
             canvas.drawRect(position, border - WIDTH, position + WIDTH,
                             border + graphheight, paint);
+            handleRect = new Rect((int)position, (int)border-RECT_WIDTH, (int)position+RECT_WIDTH, (int)border);
+            Paint handlePaint = new Paint(paint);
+            handlePaint.setColor(HANDLE_COLOR);
+            canvas.drawRect(handleRect, handlePaint);
+
         }
 
-        public boolean contains(float f){
-            return (position <= f) && ((position+WIDTH) >= f);
+        public boolean contains(MotionEvent e){
+            boolean res = (position <= e.getX()) && ((position+WIDTH) >= e.getX());
+            res |= handleRect.contains((int)e.getX(), (int)e.getY());
+            return res;
         }
 
         public float getPosition(){
@@ -172,9 +184,9 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 
             @Override
             public boolean onDown(MotionEvent e) {
-                if(lowerSelectBoundary.contains(e.getX())){
+                if(lowerSelectBoundary.contains(e)){
                     lowerSelectBoundary.setIsDragging(true);
-                } else if(upperSelectBoundary.contains(e.getX())){
+                } else if(upperSelectBoundary.contains(e)){
                     upperSelectBoundary.setIsDragging(true);
                 }
                 lastTouchEventX = e.getX();
