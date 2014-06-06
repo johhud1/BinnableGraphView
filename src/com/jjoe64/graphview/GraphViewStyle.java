@@ -22,9 +22,9 @@ package com.jjoe64.graphview;
 import android.graphics.Color;
 
 /**
- * Styles for the GraphView
- * Important: Use GraphViewSeries.GraphViewSeriesStyle for series-specify styling
- *
+ * Styles for the GraphView Important: Use GraphViewSeries.GraphViewSeriesStyle
+ * for series-specify styling
+ * 
  */
 public class GraphViewStyle {
 	private int verticalLabelsColor;
@@ -34,6 +34,11 @@ public class GraphViewStyle {
 	private int verticalLabelsWidth;
 	private int numVerticalLabels;
 	private int numHorizontalLabels;
+	private GridStyle gridStyle = GridStyle.BOTH;
+
+	public enum GridStyle {
+		BOTH, VERTICAL, HORIZONTAL
+	}
 
 	public GraphViewStyle() {
 		verticalLabelsColor = Color.WHITE;
@@ -45,6 +50,14 @@ public class GraphViewStyle {
 		this.verticalLabelsColor = vLabelsColor;
 		this.horizontalLabelsColor = hLabelsColor;
 		this.gridColor = gridColor;
+	}
+
+	public GridStyle getGridStyle() {
+		return gridStyle;
+	}
+
+	public void setGridStyle(GridStyle style) {
+		gridStyle = style;
 	}
 
 	public int getGridColor() {
@@ -84,14 +97,16 @@ public class GraphViewStyle {
 	}
 
 	/**
-	 * @param numHorizontalLabels 0 = auto
+	 * @param numHorizontalLabels
+	 *            0 = auto
 	 */
 	public void setNumHorizontalLabels(int numHorizontalLabels) {
 		this.numHorizontalLabels = numHorizontalLabels;
 	}
 
 	/**
-	 * @param numVerticalLabels 0 = auto
+	 * @param numVerticalLabels
+	 *            0 = auto
 	 */
 	public void setNumVerticalLabels(int numVerticalLabels) {
 		this.numVerticalLabels = numVerticalLabels;
@@ -106,7 +121,8 @@ public class GraphViewStyle {
 	}
 
 	/**
-	 * @param verticalLabelsWidth 0 = auto
+	 * @param verticalLabelsWidth
+	 *            0 = auto
 	 */
 	public void setVerticalLabelsWidth(int verticalLabelsWidth) {
 		this.verticalLabelsWidth = verticalLabelsWidth;
