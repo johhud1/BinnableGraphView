@@ -129,10 +129,6 @@ public class BinBarGraphView extends GraphView {
 
 	private GraphViewData[] binData(GraphViewDataInterface[] data, int numBins,
 			double binSize) {
-
-		// double range = data[data.length - 1].getX() - data[0].getX();
-		double range = viewportSize;
-		// double binSize = range / numBins;
 		double curBinCeiling = viewportStart + binSize;
 		double curBinFloor = viewportStart;
 		GraphViewData bins[] = new GraphViewData[numBins];
