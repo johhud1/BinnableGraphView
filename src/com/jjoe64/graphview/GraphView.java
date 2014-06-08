@@ -224,19 +224,29 @@ abstract public class GraphView extends LinearLayout {
 				// Log.d("GraphView",
 				// "on touch event scale not handled+"+lastTouchEventX);
 				// if not scaled, scroll
-				/*
-				 * if ((event.getAction() & MotionEvent.ACTION_DOWN) ==
-				 * MotionEvent.ACTION_DOWN) { scrollingStarted = true; handled =
-				 * true; } if ((event.getAction() & MotionEvent.ACTION_UP) ==
-				 * MotionEvent.ACTION_UP) { scrollingStarted = false;
-				 * lastTouchEventX = 0; handled = true;
-				 * 
-				 * } if ((event.getAction() & MotionEvent.ACTION_MOVE) ==
-				 * MotionEvent.ACTION_MOVE) { if (scrollingStarted) { if
-				 * (lastTouchEventX != 0) { onMoveGesture(event.getX() -
-				 * lastTouchEventX); } lastTouchEventX = event.getX(); handled =
-				 * true; } } if (handled) invalidate();
-				 */
+
+//				if ((event.getAction() & MotionEvent.ACTION_DOWN) == MotionEvent.ACTION_DOWN) {
+//					scrollingStarted = true;
+//					handled = true;
+//				}
+//				if ((event.getAction() & MotionEvent.ACTION_UP) == MotionEvent.ACTION_UP) {
+//					scrollingStarted = false;
+//					lastTouchEventX = 0;
+//					handled = true;
+//
+//				}
+//				if ((event.getAction() & MotionEvent.ACTION_MOVE) == MotionEvent.ACTION_MOVE) {
+//					if (scrollingStarted) {
+//						if (lastTouchEventX != 0) {
+//							onMoveGesture(event.getX() - lastTouchEventX);
+//						}
+//						lastTouchEventX = event.getX();
+//						handled = true;
+//					}
+//				}
+//				if (handled)
+//					invalidate();
+
 			} else {
 				// currently scaling
 				scrollingStarted = false;

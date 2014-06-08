@@ -181,7 +181,6 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 							"action event ACTION_DOWN");
 					isLongPressTimerTask longPressTask = new isLongPressTimerTask(
 							e.getX(), e.getY(), this, h);
-					this.setOnTouchListener(longPressTask);
 					timer.schedule(longPressTask, longPressTime);
 					return true;
 				}
@@ -207,7 +206,14 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 						MotionEvent.ACTION_DOWN, x, y, 0));
 			}
 		}
-
+		
+		/**
+		 * timer object that listens to touch events on the given view, and if
+		 * no 'interrupting' events occur before threshold expires, sends a
+		 * 'longPress' Message to given {@link Handler}
+		 * @author Jack
+		 *
+		 */
 		private class isLongPressTimerTask extends TimerTask implements
 				OnTouchListener {
 			private boolean uninterruptedPress = true;
@@ -216,11 +222,12 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 			// max deviation, x or y distance from origin of press
 			float difThresh = 5;
 
-			public isLongPressTimerTask(float x, float y,
-					GestureDetector.OnGestureListener l, Handler handler) {
+			public isLongPressTimerTask(float x, float y, View v,
+					Handler handler) {
 				this.h = handler;
 				this.x = x;
 				this.y = y;
+				v.setOnTouchListener(this);
 			}
 
 			@Override

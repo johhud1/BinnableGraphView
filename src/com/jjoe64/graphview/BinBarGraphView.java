@@ -9,6 +9,12 @@ import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 public class BinBarGraphView extends GraphView {
 	private boolean isNumBins;
 	private double binValue;
+	private double remainder;
+	/**
+	 * i wanna call this the reverse remainder, probably has a real name. =
+	 * (binSize - remainder)
+	 **/
+	private double rremainder;
 
 	private static final long SEC = 1000;
 	private static final long MIN = 60 * SEC;
@@ -76,19 +82,22 @@ public class BinBarGraphView extends GraphView {
 			float graphwidth, float graphheight, float border, double minX,
 			double minY, double diffX, double diffY, float horstart,
 			GraphViewSeriesStyle style) {
-		double numBins;
-		if (isNumBins) {
-			numBins = binValue;
-		} else {
-			numBins = diffX / binValue;
-		}
-		float colwidth = (float) (graphwidth / numBins);
+		double numBins = values.length - 1;
+		/*
+		 * if (isNumBins) { numBins = binValue; } else { numBins = diffX /
+		 * binValue; }
+		 */
+		float colwidth = (float) (graphwidth / numBins);// (float) (graphwidth /
+														// numBins);
 		Log.d("drawSeries", "numBins = " + binValue + " binValue = " + binValue);
 
 		paint.setStrokeWidth(style.thickness);
 		paint.setColor(style.color);
+
 		// values = binData(values, numBins);
 		// draw data
+		float remainderRatX = (float) (remainder / getBinSize());
+		float rremainderRatX = (float) (rremainder / getBinSize());
 		for (int i = 0; i < values.length; i++) {
 			float valY = (float) (values[i].getY() - minY);
 			float ratY = (float) (valY / diffY);
@@ -98,23 +107,35 @@ public class BinBarGraphView extends GraphView {
 			if (style.getValueDependentColor() != null) {
 				paint.setColor(style.getValueDependentColor().get(values[i]));
 			}
-
-			canvas.drawRect((i * colwidth) + horstart, (border - y)
-					+ graphheight,
-					((i * colwidth) + horstart) + (colwidth - 1), graphheight
-							+ border - 1, paint);
+			if (i == 0) {
+				canvas.drawRect(horstart, (border - y) + graphheight,
+						((rremainderRatX * colwidth) + horstart - 1),
+						graphheight + border - 1, paint);
+				horstart += (rremainderRatX * colwidth);
+			}
+			if (i == values.length) {
+				canvas.drawRect(
+						((i - 1 + remainderRatX) * colwidth) + horstart,
+						(border - y) + graphheight,
+						(((i - 1) * colwidth) + horstart) + (colwidth - 1),
+						graphheight + border - 1, paint);
+			} else
+				canvas.drawRect(((i - 1) * colwidth) + horstart, (border - y)
+						+ graphheight, (((i - 1) * colwidth) + horstart)
+						+ (colwidth - 1), graphheight + border - 1, paint);
 		}
 	}
 
 	@Override
 	protected GraphViewDataInterface[] _values(int idxSeries) {
+
 		if (isNumBins) {
 			// calculate binsize given binValue bins in graph
 			double binSize = viewportSize / binValue;
-			return binData(super._values(idxSeries), binSize);
+			return binData(graphSeries.get(idxSeries).values, binSize);
 		} else {
 			// just bin data according to binsize
-			return binData(super._values(idxSeries), binValue);
+			return binData(graphSeries.get(idxSeries).values, binValue);
 		}
 	}
 
@@ -129,8 +150,11 @@ public class BinBarGraphView extends GraphView {
 
 	private GraphViewData[] binData(GraphViewDataInterface[] data, int numBins,
 			double binSize) {
-		double curBinCeiling = viewportStart + binSize;
-		double curBinFloor = viewportStart;
+		remainder = viewportStart % binSize;
+		rremainder = binSize - remainder;
+
+		double curBinCeiling = viewportStart + rremainder;
+		double curBinFloor = viewportStart - remainder;
 		GraphViewData bins[] = new GraphViewData[numBins];
 		int valuesIndex = 0;
 		for (int i = 0; i < numBins; i++) {
@@ -181,6 +205,7 @@ public class BinBarGraphView extends GraphView {
 				unit = binValue / DAY;
 			}
 		}
-		return title + " (bin: " + String.format("%.2f", unit) + " " + unitStr + " )";
+		return title + " (bin: " + String.format("%.2f", unit) + " " + unitStr
+				+ " )";
 	}
 }
