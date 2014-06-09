@@ -36,7 +36,7 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 		private static final int COLOR = Color.BLACK;
 		private float position;
 		protected boolean isDragging = false;
-		protected Rect handleRect;
+		//protected Rect handleRect;
 
 		public SelectRangeHandle() {
 			position = 0;
@@ -44,7 +44,7 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 
 		public SelectRangeHandle(int position) {
 			this.position = position;
-			handleRect = new Rect();
+			//handleRect = new Rect();
 		}
 
 		public void draw(Canvas canvas, float graphwidth, float graphheight,
@@ -53,18 +53,19 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 			paint.setColor(COLOR);
 			canvas.drawRect(position, border - WIDTH, position + WIDTH, border
 					+ graphheight, paint);
+			/*
 			handleRect = new Rect((int) position, (int) border - RECT_WIDTH,
 					(int) position + RECT_WIDTH, (int) border);
 			Paint handlePaint = new Paint(paint);
 			handlePaint.setColor(HANDLE_COLOR);
-			canvas.drawRect(handleRect, handlePaint);
+			canvas.drawRect(handleRect, handlePaint);*/
 
 		}
 
 		public boolean contains(MotionEvent e) {
 			boolean res = (position <= e.getX())
 					&& ((position + WIDTH) >= e.getX());
-			res |= handleRect.contains((int) e.getX(), (int) e.getY());
+			//res |= handleRect.contains((int) e.getX(), (int) e.getY());
 			return res;
 		}
 
@@ -171,9 +172,11 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 				lowerSelectBoundary.setIsDragging(false);
 				upperSelectBoundary.setIsDragging(false);
 			}
+			boolean handled = false;
 			if (mDetector.onTouchEvent(e)) {
 				return true;
-			} else {
+			} else if(!(handled = super.onTouchEvent(e))){
+				Log.d(TAG, "GraphContentView did not handle touch event. starting long press task : " + e);
 				// our own little longPressDetector, so we can long press
 				// followed by scroll
 				if (e.getAction() == MotionEvent.ACTION_DOWN) {
@@ -186,7 +189,7 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 				}
 			}
 
-			return super.onTouchEvent(e);
+			return false;
 		}
 
 		private class GestureListenerHandler extends Handler {
@@ -220,7 +223,7 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 			private float x, y;
 			Handler h;
 			// max deviation, x or y distance from origin of press
-			float difThresh = 5;
+			float difThresh = 3;
 
 			public isLongPressTimerTask(float x, float y, View v,
 					Handler handler) {
