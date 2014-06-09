@@ -144,7 +144,7 @@ public class BinBarGraphView extends GraphView {
 
 		// double range = data[data.length - 1].getX() - data[0].getX();
 		double range = viewportSize;
-		int numBins = (int) Math.ceil(range / binSize);
+		int numBins = (int) Math.ceil(range / binSize) + 1;
 		return binData(data, numBins, binSize);
 	}
 

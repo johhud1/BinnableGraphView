@@ -51,7 +51,7 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 				float border, float horstart, Paint p) {
 			Paint paint = new Paint(p);
 			paint.setColor(COLOR);
-			canvas.drawRect(position, border - WIDTH, position + WIDTH, border
+			canvas.drawRect(position, border, position + WIDTH, border
 					+ graphheight, paint);
 			/*
 			handleRect = new Rect((int) position, (int) border - RECT_WIDTH,
