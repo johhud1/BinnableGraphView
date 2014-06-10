@@ -2,6 +2,7 @@ package com.jjoe64.graphview;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.provider.CalendarContract.Reminders;
 import android.util.Log;
 
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
@@ -82,22 +83,19 @@ public class BinBarGraphView extends GraphView {
 			float graphwidth, float graphheight, float border, double minX,
 			double minY, double diffX, double diffY, float horstart,
 			GraphViewSeriesStyle style) {
-		double numBins = values.length - 1;
-		/*
-		 * if (isNumBins) { numBins = binValue; } else { numBins = diffX /
-		 * binValue; }
-		 */
-		float colwidth = (float) (graphwidth / numBins);// (float) (graphwidth /
+		float remainderRatX = (float) (remainder / getBinSize());
+		float rremainderRatX = (float) (rremainder / getBinSize());
+		//numBins is fractional. not necessarily integer
+		double numBins = values.length;
+
+		float colwidth = (float) (graphwidth / (viewportSize / getBinSize()));// (float) (graphwidth /
 														// numBins);
 		Log.d("drawSeries", "numBins = " + binValue + " binValue = " + binValue);
 
 		paint.setStrokeWidth(style.thickness);
 		paint.setColor(style.color);
 
-		// values = binData(values, numBins);
 		// draw data
-		float remainderRatX = (float) (remainder / getBinSize());
-		float rremainderRatX = (float) (rremainder / getBinSize());
 		for (int i = 0; i < values.length; i++) {
 			float valY = (float) (values[i].getY() - minY);
 			float ratY = (float) (valY / diffY);

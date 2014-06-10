@@ -26,8 +26,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 	private static final long SEC = 1000;
 	private static final String TAG = SelectableBinBarGraphView.class.getName();
 
-	protected SelectRangeHandle lowerSelectBoundary = new SelectRangeHandle(0);
-	protected SelectRangeHandle upperSelectBoundary = new SelectRangeHandle(0);
+	protected SelectRangeHandle b1 = new SelectRangeHandle(0);
+	protected SelectRangeHandle b2 = new SelectRangeHandle(0);
 
 	private class SelectRangeHandle {
 		private static final int WIDTH = 8;
@@ -117,10 +117,10 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 			GraphViewSeriesStyle style) {
 		super.drawSeries(canvas, values, graphwidth, graphheight, border, minX,
 				minY, diffX, diffY, horstart, style);
+		SelectRangeHandle lowerSelectBoundary = (b1.getPosition() < b2.getPosition()) ? b1 : b2;
+		SelectRangeHandle upperSelectBoundary = (b1.getPosition() > b2.getPosition()) ? b1 : b2;
 		if (lowerSelectBoundary.getPosition() > 0
 				|| upperSelectBoundary.getPosition() > 0) {
-			float lowerBoundary = lowerSelectBoundary.getPosition();
-			float upperBoundary = upperSelectBoundary.getPosition();
 			Paint p = new Paint();
 			p.setColor(SELECTION_COLOR);
 			p.setAlpha(SELECTION_ALPHA);
@@ -169,8 +169,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 		@Override
 		public boolean onTouchEvent(MotionEvent e) {
 			if (e.getAction() == MotionEvent.ACTION_UP) {
-				lowerSelectBoundary.setIsDragging(false);
-				upperSelectBoundary.setIsDragging(false);
+				b1.setIsDragging(false);
+				b2.setIsDragging(false);
 			}
 			boolean handled = false;
 			if (mDetector.onTouchEvent(e)) {
@@ -272,6 +272,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 				String tag = getClass().getName() + ":onSinlgeTapUp";
 				Log.d(TAG, " got a singleTapUp!");
 				float x = e.getX();
+				SelectRangeHandle lowerSelectBoundary = (b1.getPosition() < b2.getPosition()) ? b1 : b2;
+				SelectRangeHandle upperSelectBoundary = (b1.getPosition() > b2.getPosition()) ? b1 : b2;
 				if (x > upperSelectBoundary.getPosition()) {
 					upperSelectBoundary.setPosition(x);
 				} else if (x < lowerSelectBoundary.getPosition()) {
@@ -296,6 +298,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 
 			@Override
 			public boolean onDown(MotionEvent e) {
+				SelectRangeHandle lowerSelectBoundary = (b1.getPosition() < b2.getPosition()) ? b1 : b2;
+				SelectRangeHandle upperSelectBoundary = (b1.getPosition() > b2.getPosition()) ? b1 : b2;
 				if (lowerSelectBoundary.contains(e)) {
 					lowerSelectBoundary.setIsDragging(true);
 				} else if (upperSelectBoundary.contains(e)) {
@@ -310,6 +314,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 			public boolean onScroll(MotionEvent e1, MotionEvent e2,
 					float distanceX, float distanceY) {
 				Log.d(TAG, "onScroll in SelectableBinGestuerListener");
+				SelectRangeHandle lowerSelectBoundary = (b1.getPosition() < b2.getPosition()) ? b1 : b2;
+				SelectRangeHandle upperSelectBoundary = (b1.getPosition() > b2.getPosition()) ? b1 : b2;
 				// onMoveGesture(e2.getX() - lastTouchEventX);
 				if (lowerSelectBoundary.isDragging()) {
 					lowerSelectBoundary.movePosition(-distanceX);
@@ -330,6 +336,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 			String tag = getClass().getName()
 					+ ":notifyOnValuesSelectedListener";
 			if (onValuesSelectedListener != null) {
+				SelectRangeHandle lowerSelectBoundary = (b1.getPosition() < b2.getPosition()) ? b1 : b2;
+				SelectRangeHandle upperSelectBoundary = (b1.getPosition() > b2.getPosition()) ? b1 : b2;
 				double lowerValueBoundary = (viewportStart + (lowerSelectBoundary
 						.getPosition() / getWidth()) * viewportSize);
 				double upperValueBoundary = (viewportStart + (upperSelectBoundary
@@ -371,6 +379,8 @@ public class SelectableBinBarGraphView extends BinBarGraphView {
 		@Override
 		public void onLongPress(MotionEvent e) {
 			Log.d(TAG, "onLongPress! Event: " + e);
+			SelectRangeHandle lowerSelectBoundary = (b1.getPosition() < b2.getPosition()) ? b1 : b2;
+			SelectRangeHandle upperSelectBoundary = (b1.getPosition() > b2.getPosition()) ? b1 : b2;
 			SelectRangeHandle closer = closer(e.getX(), lowerSelectBoundary,
 					upperSelectBoundary);
 			closer.setPosition(e.getX());

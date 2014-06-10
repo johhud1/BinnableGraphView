@@ -225,27 +225,30 @@ abstract public class GraphView extends LinearLayout {
 				// "on touch event scale not handled+"+lastTouchEventX);
 				// if not scaled, scroll
 
-//				if ((event.getAction() & MotionEvent.ACTION_DOWN) == MotionEvent.ACTION_DOWN) {
-//					scrollingStarted = true;
-//					handled = true;
-//				}
-//				if ((event.getAction() & MotionEvent.ACTION_UP) == MotionEvent.ACTION_UP) {
-//					scrollingStarted = false;
-//					lastTouchEventX = 0;
-//					handled = true;
-//
-//				}
-//				if ((event.getAction() & MotionEvent.ACTION_MOVE) == MotionEvent.ACTION_MOVE) {
-//					if (scrollingStarted) {
-//						if (lastTouchEventX != 0) {
-//							onMoveGesture(event.getX() - lastTouchEventX);
-//						}
-//						lastTouchEventX = event.getX();
-//						handled = true;
-//					}
-//				}
-//				if (handled)
-//					invalidate();
+				// if ((event.getAction() & MotionEvent.ACTION_DOWN) ==
+				// MotionEvent.ACTION_DOWN) {
+				// scrollingStarted = true;
+				// handled = true;
+				// }
+				// if ((event.getAction() & MotionEvent.ACTION_UP) ==
+				// MotionEvent.ACTION_UP) {
+				// scrollingStarted = false;
+				// lastTouchEventX = 0;
+				// handled = true;
+				//
+				// }
+				// if ((event.getAction() & MotionEvent.ACTION_MOVE) ==
+				// MotionEvent.ACTION_MOVE) {
+				// if (scrollingStarted) {
+				// if (lastTouchEventX != 0) {
+				// onMoveGesture(event.getX() - lastTouchEventX);
+				// }
+				// lastTouchEventX = event.getX();
+				// handled = true;
+				// }
+				// }
+				// if (handled)
+				// invalidate();
 
 			} else {
 				// currently scaling
@@ -374,6 +377,7 @@ abstract public class GraphView extends LinearLayout {
 	private final Rect textBounds = new Rect();
 	private boolean staticHorizontalLabels;
 	private boolean staticVerticalLabels;
+	private CustomLabelValueGenerator customLabelValGenerator;
 
 	public GraphView(Context context, AttributeSet attrs) {
 		this(context, attrs.getAttributeValue(null, "title"));
@@ -562,8 +566,15 @@ abstract public class GraphView extends LinearLayout {
 		String[] labels = new String[numLabels + 1];
 		double min = getMinX(false);
 		double max = getMaxX(false);
+		double[] labelVals = null;
+		if (customLabelValGenerator != null) {
+			labelVals = customLabelValGenerator.generateValues(min, max, graphwidth,
+					true);
+			numLabels = (labelVals != null) ? labelVals.length : numLabels;
+		}
 		for (int i = 0; i <= numLabels; i++) {
-			labels[i] = formatLabel(min + ((max - min) * i / numLabels), true);
+			labels[i] = formatLabel((labelVals != null) ? labelVals[i] : min
+					+ ((max - min) * i / numLabels), true);
 		}
 		return labels;
 	}
@@ -588,10 +599,16 @@ abstract public class GraphView extends LinearLayout {
 				min = min * 0.95d;
 			}
 		}
-
+		double[] labelVals = null;
+		if (customLabelValGenerator != null) {
+			labelVals = customLabelValGenerator.generateValues(min, max, graphheight,
+					false);
+			numLabels = (labelVals != null) ? labelVals.length : numLabels;
+		}
 		for (int i = 0; i <= numLabels; i++) {
-			labels[numLabels - i] = formatLabel(min
-					+ ((max - min) * i / numLabels), false);
+			labels[numLabels - i] = formatLabel(
+					(labelVals != null) ? labelVals[i] : min
+							+ ((max - min) * i / numLabels), false);
 		}
 		return labels;
 	}
@@ -833,6 +850,11 @@ abstract public class GraphView extends LinearLayout {
 	public void setCustomLabelFormatter(
 			CustomLabelFormatter customLabelFormatter) {
 		this.customLabelFormatter = customLabelFormatter;
+	}
+
+	public void setCustomLabelValGenerator(
+			CustomLabelValueGenerator customLabelValGenerator) {
+		this.customLabelValGenerator = customLabelValGenerator;
 	}
 
 	/**
